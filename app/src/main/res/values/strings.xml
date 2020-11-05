@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">WirtualnaTalia</string>
+    <string name="NOT_STARTED">Not started</string>
+    <string name="STARTED">Started</string>
+    <string name="START">START</string>
+    <string name="STOP">STOP</string>
+</resources>
