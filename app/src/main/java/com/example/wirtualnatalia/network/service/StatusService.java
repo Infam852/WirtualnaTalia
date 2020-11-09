@@ -7,8 +7,8 @@ import android.util.Log;
 
 public class StatusService {
     private NsdManager.RegistrationListener registrationListener;
-    public static String SERVICE_NAME = "StatusService";
-    public static final String SERVICE_TYPE = "_http._tcp";
+    public static String SERVICE_NAME = "Virtual Deck";  // identifies the device (android will automatically append characters if not unique)
+    public static String SERVICE_TYPE = "_virtualdeck._tcp.";  // identifies the service
 
     public static final String TAG = "Status Service";
 
@@ -37,7 +37,7 @@ public class StatusService {
                 // resolve a conflict, so update the name you initially requested
                 // with the name Android actually used.
                 SERVICE_NAME = NsdServiceInfo.getServiceName();
-                Log.i(TAG, "Service registered");
+                Log.i(TAG, "Service registered: " + SERVICE_NAME + ", " + SERVICE_TYPE);
             }
 
             @Override

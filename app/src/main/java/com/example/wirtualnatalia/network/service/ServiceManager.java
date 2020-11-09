@@ -6,6 +6,9 @@ import android.net.nsd.NsdServiceInfo;
 import android.util.Log;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
+
+import javax.net.ssl.SSLEngineResult;
 
 public class ServiceManager {
     public static final String TAG = "Service Manager";
@@ -15,16 +18,23 @@ public class ServiceManager {
     private NsdServiceInfo mService;
     private NsdManager.DiscoveryListener discoveryListener;
 
+    private ArrayList<NsdServiceInfo> discoveryServices;
+
 
     public ServiceManager(Context context) {
+        discoveryServices = new ArrayList<>();
         nsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
         initializeResolveListener();
         initializeDiscoveryListener();
     }
 
-    public void start() {
+    public void start_discovery() {
         nsdManager.discoverServices(
                 StatusService.SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
+    }
+
+    public void connectToService(NsdServiceInfo service){
+        nsdManager.resolveService(service, resolveListener);
     }
 
     public void initializeDiscoveryListener() {
@@ -41,12 +51,16 @@ public class ServiceManager {
             @Override
             public void onServiceFound(NsdServiceInfo service) {
                 // A service was found! Do something with it.
-                Log.d(TAG, "Service discovery success: " + service);
-                if (service.getServiceName().contains(StatusService.SERVICE_NAME)){
-                    nsdManager.resolveService(service, resolveListener);
+                Log.i(TAG, "Type: " + service.getServiceName() + "vs " + StatusService.SERVICE_TYPE);
+                if (!service.getServiceType().equals(StatusService.SERVICE_TYPE)){
+                    Log.i(TAG, "Unknown service found: " + service);
+                }
+                else if (service.getServiceName().contains(StatusService.SERVICE_NAME)){
+                    Log.d(TAG, "Status service found: " + service);
+                    discoveryServices.add(service);
                 }
                 else {
-                    Log.d(TAG, "Unknown service found");
+                    Log.i(TAG, "Service: " + service);
                 }
             }
 
@@ -55,6 +69,17 @@ public class ServiceManager {
                 // When the network service is no longer available.
                 // Internal bookkeeping code goes here.
                 Log.e(TAG, "service lost: " + service);
+                NsdServiceInfo toRemove = null;
+                for (NsdServiceInfo serviceInfo: discoveryServices){
+                    if (serviceInfo.toString().equals(service.toString())){
+                        toRemove = serviceInfo;
+                        break;
+                    }
+                }
+                if (toRemove != null){
+                    discoveryServices.remove(toRemove);
+                }
+                Log.i(TAG, "discovery services: " + discoveryServices + ", " + discoveryServices.contains(service));
             }
 
             @Override
@@ -96,5 +121,24 @@ public class ServiceManager {
                 Log.i(TAG, "Service port, host: " + port + ", " + host.toString());
             }
         };
+    }
+
+    public void tearDown(NsdManager.RegistrationListener registrationListener) {
+        nsdManager.unregisterService(registrationListener);
+        nsdManager.stopServiceDiscovery(discoveryListener);
+    }
+
+    public ArrayList<NsdServiceInfo> getServices(){
+        return discoveryServices;
+    }
+
+    public ArrayList<String> getStringServices(){
+        Log.i(TAG, "Get found services: " + discoveryServices);
+        ArrayList<String> stringServices = new ArrayList<>();
+        for (NsdServiceInfo serviceInfo: discoveryServices){
+            stringServices.add(serviceInfo.toString());
+        }
+        Log.i(TAG, "String services: " + stringServices);
+        return stringServices;
     }
 }

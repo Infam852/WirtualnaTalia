@@ -5,15 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 
 
 import com.example.wirtualnatalia.R;
 import com.example.wirtualnatalia.network.service.ServiceManager;
 import com.example.wirtualnatalia.network.service.StatusService;
-
-import java.net.ServerSocket;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private Button clientActivityBtn;
     private Button startServiceBtn;
     private Button startDiscoveryBtn;
+    private Button statusServiceBtn;
 
     private StatusService statusService;
     private ServiceManager serviceManager;
@@ -40,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         clientActivityBtn = (Button) findViewById(R.id.nextActivityClientBtn);
         startServiceBtn = (Button) findViewById(R.id.startServiceBtn);
         startDiscoveryBtn = (Button) findViewById(R.id.startDiscoveryBtn);
+        statusServiceBtn= (Button) findViewById(R.id.serviceActivityBtn);
 
         statusService = new StatusService();
         serviceManager = new ServiceManager(this);
@@ -48,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
         clientActivityBtn.setOnClickListener(v -> launchClientActivity());
         startServiceBtn.setOnClickListener(v -> statusService.registerService(
                                            currentContext, 5678));
-        startDiscoveryBtn.setOnClickListener(v -> serviceManager.start());
+        startDiscoveryBtn.setOnClickListener(v -> serviceManager.start_discovery());
+        statusServiceBtn.setOnClickListener(v -> launchStatusServiceActivity());
     }
 
     @Override
@@ -64,6 +64,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void launchClientActivity() {
         Intent intent = new Intent(this, ClientActivity.class);
+        startActivity(intent);
+    }
+
+    private void launchStatusServiceActivity() {
+        Intent intent = new Intent(this, StatusServiceActivity.class);
         startActivity(intent);
     }
 }

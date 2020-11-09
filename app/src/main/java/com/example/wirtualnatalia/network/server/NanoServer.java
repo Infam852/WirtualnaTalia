@@ -15,7 +15,7 @@ public class NanoServer extends NanoHTTPD {
     public static final String TAG = "HTTP Server";
     public static boolean WORKING = false;
 
-    public static final int PORT = 5050;
+    public static int PORT;
 
     private static final String MIME_JSON = "application/json";
 
@@ -31,7 +31,8 @@ public class NanoServer extends NanoHTTPD {
 
 
     public NanoServer() throws IOException {
-        super(PORT);
+        super(0);
+        PORT = this.getListeningPort();
         WORKING = true;
     }
 
