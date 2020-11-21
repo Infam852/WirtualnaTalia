@@ -22,7 +22,6 @@ public class StatusService {
 
         NsdManager nsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
         initializeRegistrationListener();
-
         nsdManager.registerService(
                 statusService, NsdManager.PROTOCOL_DNS_SD, registrationListener);
         Log.i(TAG, "quit register service");

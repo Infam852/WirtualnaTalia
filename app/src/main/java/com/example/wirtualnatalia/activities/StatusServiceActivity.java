@@ -1,27 +1,39 @@
 package com.example.wirtualnatalia.activities;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.graphics.Color;
+import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.wirtualnatalia.network.service.ServiceConnection;
+import com.example.wirtualnatalia.utils.Dialog;
 import com.example.wirtualnatalia.R;
+import com.example.wirtualnatalia.network.server.NanoServer;
 import com.example.wirtualnatalia.network.service.ServiceManager;
+import com.example.wirtualnatalia.network.service.StatusService;
+import com.example.wirtualnatalia.utils.User;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class StatusServiceActivity extends Activity {
     // UI elements
+    private EditText nicknameInput;
+    private TextView serviceNameTxt;
+    private Button setNicknameBtn;
+    private Button startStatusServiceBtn;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView servicesList;
 
@@ -31,6 +43,9 @@ public class StatusServiceActivity extends Activity {
 
     private ArrayList<String> services;
     private ArrayAdapter <String> adapter;
+
+    private StatusService statusService;
+    private NanoServer nanoServer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,10 +68,26 @@ public class StatusServiceActivity extends Activity {
         };
         initUI();
 
+        // it sets up discovery listener which should be initialized only once
         serviceManager.start_discovery();
     }
 
     private void initUI(){
+        nicknameInput = findViewById(R.id.usrNicknameInput);
+        serviceNameTxt = findViewById(R.id.serviceNameTxt);
+
+        setNicknameBtn = findViewById(R.id.setNicknameBtn);
+        setNicknameBtn.setOnClickListener(v -> {
+            Log.i(TAG, "Set nickname button");
+            User.getInstance().setNickname(nicknameInput.getText().toString());
+        });
+
+        startStatusServiceBtn = findViewById(R.id.startStatusServiceBtn);
+        startStatusServiceBtn.setOnClickListener(v -> {
+            Log.i(TAG, "Start service button clicked");
+            startService();
+        });
+
         swipeRefreshLayout = findViewById(R.id.swipeRefreshConnections);
         swipeRefreshLayout.setOnRefreshListener(
             new SwipeRefreshLayout.OnRefreshListener() {
@@ -70,13 +101,17 @@ public class StatusServiceActivity extends Activity {
         );
         servicesList = findViewById(R.id.servicesList);
         servicesList.setAdapter(adapter);
-        servicesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-                String item = (String) adapter.getItemAtPosition(position);
-                Log.i(TAG, "Item clicked: " + item);
-            }
-        });
+        servicesList.setOnItemClickListener(
+                (adapter, view, position, id) -> handleConnection(adapter, position));
+    }
+
+    private void handleConnection(AdapterView<?> adapter, int position){
+        String item = (String) adapter.getItemAtPosition(position);
+        NsdServiceInfo serviceClicked = serviceManager.getServicesMap().get(item);
+        Log.i(TAG, "Item clicked: " + item);
+        Log.i(TAG, "Service clicked: " + serviceClicked);
+        ServiceConnection serviceConnection = new ServiceConnection(this);
+        serviceConnection.connect(serviceClicked);
     }
 
     private void refreshServices(){
@@ -86,5 +121,23 @@ public class StatusServiceActivity extends Activity {
         adapter.notifyDataSetChanged();
         // remove progress indicator
         swipeRefreshLayout.setRefreshing(false);
+    }
+
+    private void startService(){
+        Log.i(TAG, "Start service function");
+        statusService = new StatusService();
+        try {
+            nanoServer = new NanoServer();
+            nanoServer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG, "Server not started");
+            Dialog.showAlert(this, "Error", "You have already started service!");
+            return;
+        }
+
+        Log.i(TAG, String.format("Try to register service on port (%d)", NanoServer.PORT));
+        statusService.registerService(this, NanoServer.PORT);
+        serviceNameTxt.setText(statusService.SERVICE_NAME);
     }
 }

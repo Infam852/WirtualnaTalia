@@ -9,15 +9,16 @@
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshConnections"
-        android:layout_width="342dp"
-        android:layout_height="485dp"
+        android:layout_width="356dp"
+        android:layout_height="323dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="36dp"
         android:layout_marginEnd="16dp"
         android:background="@color/gray"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.483"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SearchTitleView">
+        app:layout_constraintTop_toBottomOf="@+id/usrNicknameInput">
 
         <ListView
             android:id="@+id/servicesList"
@@ -42,12 +43,66 @@
         android:id="@+id/startStatusServiceBtn"
         android:layout_width="204dp"
         android:layout_height="55dp"
-        android:layout_marginTop="36dp"
         android:background="@drawable/primary_button"
         android:text="Start Service"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/serviceNameTxt" />
+
+    <Button
+        android:id="@+id/setNicknameBtn"
+        android:layout_width="165dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/primary_button"
+        android:text="Set nickname"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.235"
+        app:layout_constraintStart_toEndOf="@+id/usrNicknameInput"
+        app:layout_constraintTop_toBottomOf="@+id/SearchTitleView" />
+
+    <EditText
+        android:id="@+id/usrNicknameInput"
+        android:layout_width="171dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="40dp"
+        android:ems="10"
+        android:hint="Nickname"
+        android:inputType="textPersonName"
+        android:textColor="@color/white"
+        android:textColorHint="@color/hint_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SearchTitleView" />
+
+    <TextView
+        android:id="@+id/serviceNameTxt"
+        android:layout_width="161dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="60dp"
+        android:text="@string/NOT_STARTED"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/serviceNameLabel"
+        app:layout_constraintTop_toBottomOf="@+id/swipeRefreshConnections" />
+
+    <TextView
+        android:id="@+id/serviceNameLabel"
+        android:layout_width="175dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="60dp"
+        android:text="Your service name:"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/swipeRefreshConnections" />
 </androidx.constraintlayout.widget.ConstraintLayout>

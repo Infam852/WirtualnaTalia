@@ -11,6 +11,7 @@ import android.widget.Button;
 import com.example.wirtualnatalia.R;
 import com.example.wirtualnatalia.network.service.ServiceManager;
 import com.example.wirtualnatalia.network.service.StatusService;
+import com.example.wirtualnatalia.utils.User;
 
 public class MainActivity extends AppCompatActivity {
 
