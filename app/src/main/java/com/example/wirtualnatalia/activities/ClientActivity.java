@@ -56,7 +56,7 @@ public class ClientActivity extends Activity {
 
     public void handlePostStatus() {
         Log.d(TAG, "Send POST request to the server...");
-        client.sendStatusPOST(this, responseView);
+        client.sendStatusPOST(this, "responseView");
     }
 
 }

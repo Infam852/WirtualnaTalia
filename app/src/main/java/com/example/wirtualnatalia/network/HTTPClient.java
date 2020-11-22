@@ -8,8 +8,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
@@ -28,7 +32,7 @@ public class HTTPClient {
 
     private final int port;
     private final InetAddress host;
-    public String STATUS_URL = "http://192.168.0.24:5050/status";
+//    public String STATUS_URL = "http://192.168.0.24:5050/status";
 
     // !TODO should be enum?
     public static final String
@@ -62,39 +66,31 @@ public class HTTPClient {
         queue.add(stringRequest);
     }
 
-    public void sendStatusPOST(Context context, TextView responseView){
-
+    public void sendStatusPOST(Context context, String status){
         RequestQueue queue = Volley.newRequestQueue(context);
-        // Request a string response from the provided URL.
-        StringRequest postRequest = new StringRequest(Request.Method.POST, STATUS_URL,
-                new Response.Listener<String>()
-                {
-                    @Override
-                    public void onResponse(String response) {
-                        // response
-                        Log.d("Response", response);
-                        responseView.setText(response);
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        Log.e(TAG, "That didn't work! logs: " + error.getMessage());
-                    }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams()
-            {
-                Map<String, String>  params = new HashMap<String, String>();
-                params.put("name", "Alif");
+        JSONObject postData = new JSONObject();
+        // fill with data
+        try {
+            postData.put("status", "(x,y,z)");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-                return params;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
+                createURL(STATUS_ENDPOINT), postData, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.i(TAG, "Got response: " + response.toString());
             }
-        };
-        queue.add(postRequest);
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "ERROR");
+                error.printStackTrace();
+            }
+        });
+
+        queue.add(jsonObjectRequest);
     }
 
     private String getErrMessage(VolleyError error){

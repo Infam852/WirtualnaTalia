@@ -5,7 +5,11 @@ import android.content.res.Resources;
 import android.net.nsd.NsdManager;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import fi.iki.elonen.NanoHTTPD;
@@ -59,12 +63,21 @@ public class NanoServer extends NanoHTTPD {
 
     private Response handleStatusPOST(IHTTPSession session){
         try {
-            session.parseBody(new HashMap<>());
-            String requestBody = session.getQueryParameterString();
+            Log.i(TAG, "Got POST request");
+//            session.parseBody(new HashMap<>());
+//            String requestBody = session.getQueryParameterString();
+            final HashMap<String, String> params = new HashMap<String, String>();
+            session.parseBody(params);
+            JSONObject json = new JSONObject(params.get("postData"));
+            Log.i(TAG, "POST json=" + json + ", status: " + json.getString("status"));
+
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("response", "Status updated");
             return newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT,
-                    "Request body = " + requestBody);
-        } catch (IOException | ResponseException e) {
+                    responseJson.toString());
+        } catch (IOException | ResponseException | JSONException e) {
             // handle
+            Log.e(TAG, "Error: " + Arrays.toString(e.getStackTrace()));
         }
         return newFixedLengthResponse(Response.Status.BAD_REQUEST, MIME_PLAINTEXT,
                 "Failed to parse the request");

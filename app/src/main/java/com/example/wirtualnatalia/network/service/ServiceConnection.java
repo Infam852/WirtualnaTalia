@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import com.example.wirtualnatalia.network.HTTPClient;
 import com.example.wirtualnatalia.network.StatusPuller;
+import com.example.wirtualnatalia.network.StatusPusher;
+import com.example.wirtualnatalia.network.service.ServiceData;
+import com.example.wirtualnatalia.utils.Dialog;
 
 import org.w3c.dom.Text;
 
@@ -71,6 +74,7 @@ public class ServiceConnection {
                 Log.i(TAG, "Resolve Succeeded. " + serviceInfo);
                 if (serviceInfo.getServiceName().equals(SERVICE_NAME)){
                     Log.w(TAG, "Connected to the same device, abort...");
+                    Dialog.showAlert(context, "Error", "You cannot connect to your service!");
 //                    return;
                 }
                 connectedService = serviceInfo;
@@ -80,6 +84,8 @@ public class ServiceConnection {
                 HTTPClient client = new HTTPClient(host, port);
                 StatusPuller statusPuller = StatusPuller.getInstance(client);
                 statusPuller.start(context);
+                StatusPusher statusPusher = StatusPusher.getInstance(client);
+                statusPusher.start(context);
             }
         };
     }
@@ -94,6 +100,8 @@ public class ServiceConnection {
                 // with the name Android actually used.
                 SERVICE_NAME = NsdServiceInfo.getServiceName();
                 Log.i(TAG, "Service registered: " + SERVICE_NAME + ", " + SERVICE_TYPE);
+                ServiceData.getInstance().setServiceStarted(true);
+                ServiceData.getInstance().setServiceName(SERVICE_NAME);
             }
 
             @Override
@@ -106,6 +114,8 @@ public class ServiceConnection {
             public void onServiceUnregistered(NsdServiceInfo arg0) {
                 // Service has been unregistered. This only happens when you call
                 // NsdManager.unregisterService() and pass in this listener.
+                ServiceData.getInstance().setServiceStarted(false);
+                ServiceData.getInstance().setServiceName(null);
             }
 
             @Override

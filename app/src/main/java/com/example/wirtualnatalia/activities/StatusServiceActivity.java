@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.wirtualnatalia.network.service.ServiceConnection;
+import com.example.wirtualnatalia.network.service.ServiceData;
 import com.example.wirtualnatalia.network.service.VirtualDeckService;
 import com.example.wirtualnatalia.utils.Dialog;
 import com.example.wirtualnatalia.R;
@@ -79,6 +80,9 @@ public class StatusServiceActivity extends Activity {
     private void initUI(){
         nicknameInput = findViewById(R.id.usrNicknameInput);
         serviceNameTxt = findViewById(R.id.serviceNameTxt);
+        String serviceName = ServiceData.getInstance().getServiceName();
+        if (serviceName != null) { serviceNameTxt.setText(serviceName); }
+
         serverResponseTxt = findViewById(R.id.serverResponseTxt);
 
         setNicknameBtn = findViewById(R.id.setNicknameBtn);

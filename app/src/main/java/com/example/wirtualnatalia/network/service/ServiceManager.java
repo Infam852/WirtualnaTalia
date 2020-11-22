@@ -13,26 +13,6 @@ import java.util.HashMap;
 
 import javax.net.ssl.SSLEngineResult;
 
-class ServiceData {
-    // Singleton
-    private static ServiceData INSTANCE = new ServiceData();
-    private ServiceData() {}
-    public ServiceData getInstance(){
-        return INSTANCE;
-    }
-
-    // data
-    private boolean serviceStarted;
-    private String serviceName;
-
-    private void setServiceStarted(boolean val) { serviceStarted = val; }
-    private boolean getServiceStarted(){ return serviceStarted; }
-
-    private void setServiceName(String val) { serviceName = val; }
-    private String getServiceName(){ return serviceName; }
-
-}
-
 
 public class ServiceManager {
     public static final String TAG = "Service Manager";
