@@ -5,11 +5,34 @@ import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
 import android.util.Log;
 
+import com.example.wirtualnatalia.network.StatusPuller;
+
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.net.ssl.SSLEngineResult;
+
+class ServiceData {
+    // Singleton
+    private static ServiceData INSTANCE = new ServiceData();
+    private ServiceData() {}
+    public ServiceData getInstance(){
+        return INSTANCE;
+    }
+
+    // data
+    private boolean serviceStarted;
+    private String serviceName;
+
+    private void setServiceStarted(boolean val) { serviceStarted = val; }
+    private boolean getServiceStarted(){ return serviceStarted; }
+
+    private void setServiceName(String val) { serviceName = val; }
+    private String getServiceName(){ return serviceName; }
+
+}
+
 
 public class ServiceManager {
     public static final String TAG = "Service Manager";
@@ -30,7 +53,7 @@ public class ServiceManager {
 
     public void start_discovery() {
         nsdManager.discoverServices(
-                StatusService.SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
+                VirtualDeckService.SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
     }
 
     public void initializeDiscoveryListener() {
@@ -48,11 +71,11 @@ public class ServiceManager {
             public void onServiceFound(NsdServiceInfo service) {
                 // A service was found! Do something with it.
                 Log.i(TAG, "Service name: " + service.getServiceName() +
-                        " Service type: " + StatusService.SERVICE_TYPE);
-                if (!service.getServiceType().equals(StatusService.SERVICE_TYPE)){
+                        " Service type: " + VirtualDeckService.SERVICE_TYPE);
+                if (!service.getServiceType().equals(VirtualDeckService.SERVICE_TYPE)){
                     Log.i(TAG, "Unknown service found: " + service);
                 }
-                else if (service.getServiceName().contains(StatusService.SERVICE_NAME)){
+                else if (service.getServiceName().contains(VirtualDeckService.SERVICE_NAME)){
                     Log.d(TAG, "Status service found: " + service);
                     Log.d(TAG, "Status service in: " + containNsdService(service));
                     if (!containNsdService(service)){

@@ -1,4 +1,4 @@
-package com.example.wirtualnatalia.network.server;
+package com.example.wirtualnatalia.network;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,25 +12,44 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
 public class HTTPClient {
     public String TAG = "HTTP CLIENT";
 
+    private final int port;
+    private final InetAddress host;
     public String STATUS_URL = "http://192.168.0.24:5050/status";
 
-    public void sendStatusGET(Context context, TextView responseView){
+    // !TODO should be enum?
+    public static final String
+        STATUS_ENDPOINT = "status";
+
+    public HTTPClient(InetAddress host, int port){
+        this.port = port;
+        this.host = host;
+        Log.i(TAG, "Created HTTPClient for (" + host.toString() + ":" + port + ")");
+    }
+
+    public void sendStatusGET(Context context){
 
         RequestQueue queue = Volley.newRequestQueue(context);
         // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, STATUS_URL,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, createURL(STATUS_ENDPOINT),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d(TAG, "Response is: " + response);
-                        responseView.setText(response);
+                        response = response + ", " + new Timestamp(System.currentTimeMillis());
+                        Log.d(TAG, "Got response on GET /status: " + response);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -87,4 +106,10 @@ public class HTTPClient {
         }
         return "Fail to parse error msg";
     }
+
+    private String createURL(String endpoint){
+        return String.format(Locale.getDefault(), "http://%s:%d/%s",
+                this.host.toString(), this.port, endpoint);
+    }
+
 }

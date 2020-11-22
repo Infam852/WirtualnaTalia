@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.wirtualnatalia.R;
-import com.example.wirtualnatalia.network.server.HTTPClient;
+import com.example.wirtualnatalia.network.HTTPClient;
 
 
 public class ClientActivity extends Activity {
@@ -46,12 +46,12 @@ public class ClientActivity extends Activity {
 
         responseView = (TextView) findViewById(R.id.responeView);
 
-        client = new HTTPClient();
+//        client = new HTTPClient();
     }
 
     public void handleGetStatus() {
         Log.d(TAG, "Send GET request to the server...");
-        client.sendStatusGET(this, responseView);
+        client.sendStatusGET(this);
     }
 
     public void handlePostStatus() {

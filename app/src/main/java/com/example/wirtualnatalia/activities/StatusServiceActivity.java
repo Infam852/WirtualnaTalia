@@ -18,12 +18,14 @@ import androidx.annotation.Nullable;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.wirtualnatalia.network.service.ServiceConnection;
+import com.example.wirtualnatalia.network.service.VirtualDeckService;
 import com.example.wirtualnatalia.utils.Dialog;
 import com.example.wirtualnatalia.R;
-import com.example.wirtualnatalia.network.server.NanoServer;
+import com.example.wirtualnatalia.network.NanoServer;
 import com.example.wirtualnatalia.network.service.ServiceManager;
-import com.example.wirtualnatalia.network.service.StatusService;
 import com.example.wirtualnatalia.utils.User;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class StatusServiceActivity extends Activity {
     // UI elements
     private EditText nicknameInput;
     private TextView serviceNameTxt;
+    private TextView serverResponseTxt;
     private Button setNicknameBtn;
     private Button startStatusServiceBtn;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -44,7 +47,8 @@ public class StatusServiceActivity extends Activity {
     private ArrayList<String> services;
     private ArrayAdapter <String> adapter;
 
-    private StatusService statusService;
+    private ServiceConnection connectionServer;
+    private ServiceConnection connectionClient;
     private NanoServer nanoServer;
 
     @Override
@@ -75,6 +79,7 @@ public class StatusServiceActivity extends Activity {
     private void initUI(){
         nicknameInput = findViewById(R.id.usrNicknameInput);
         serviceNameTxt = findViewById(R.id.serviceNameTxt);
+        serverResponseTxt = findViewById(R.id.serverResponseTxt);
 
         setNicknameBtn = findViewById(R.id.setNicknameBtn);
         setNicknameBtn.setOnClickListener(v -> {
@@ -110,8 +115,9 @@ public class StatusServiceActivity extends Activity {
         NsdServiceInfo serviceClicked = serviceManager.getServicesMap().get(item);
         Log.i(TAG, "Item clicked: " + item);
         Log.i(TAG, "Service clicked: " + serviceClicked);
-        ServiceConnection serviceConnection = new ServiceConnection(this);
-        serviceConnection.connect(serviceClicked);
+        connectionClient = new ServiceConnection(this,
+                VirtualDeckService.SERVICE_NAME, VirtualDeckService.SERVICE_TYPE);
+        connectionClient.connect(serviceClicked);
     }
 
     private void refreshServices(){
@@ -125,7 +131,8 @@ public class StatusServiceActivity extends Activity {
 
     private void startService(){
         Log.i(TAG, "Start service function");
-        statusService = new StatusService();
+        connectionServer = new ServiceConnection(this,
+                VirtualDeckService.SERVICE_NAME, VirtualDeckService.SERVICE_TYPE);
         try {
             nanoServer = new NanoServer();
             nanoServer.start();
@@ -137,7 +144,8 @@ public class StatusServiceActivity extends Activity {
         }
 
         Log.i(TAG, String.format("Try to register service on port (%d)", NanoServer.PORT));
-        statusService.registerService(this, NanoServer.PORT);
-        serviceNameTxt.setText(statusService.SERVICE_NAME);
+        connectionServer.registerService(this, NanoServer.PORT);
+
+        serviceNameTxt.setText(connectionServer.SERVICE_NAME);
     }
 }

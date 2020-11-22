@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.example.wirtualnatalia.R;
-import com.example.wirtualnatalia.network.server.NanoServer;
+import com.example.wirtualnatalia.network.NanoServer;
 
 import java.io.IOException;
 

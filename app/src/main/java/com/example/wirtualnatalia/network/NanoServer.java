@@ -1,4 +1,4 @@
-package com.example.wirtualnatalia.network.server;
+package com.example.wirtualnatalia.network;
 
 import android.content.Context;
 import android.content.res.Resources;

@@ -10,7 +10,6 @@ import android.widget.Button;
 
 import com.example.wirtualnatalia.R;
 import com.example.wirtualnatalia.network.service.ServiceManager;
-import com.example.wirtualnatalia.network.service.StatusService;
 import com.example.wirtualnatalia.utils.User;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private Button startDiscoveryBtn;
     private Button statusServiceBtn;
 
-    private StatusService statusService;
+//    private StatusService statusService;
     private ServiceManager serviceManager;
 
     private Context currentContext;
@@ -41,13 +40,13 @@ public class MainActivity extends AppCompatActivity {
         startDiscoveryBtn = (Button) findViewById(R.id.startDiscoveryBtn);
         statusServiceBtn= (Button) findViewById(R.id.serviceActivityBtn);
 
-        statusService = new StatusService();
+//        statusService = new StatusService();
         serviceManager = new ServiceManager(this);
 
         serverActivityBtn.setOnClickListener(v -> launchServerActivity());
         clientActivityBtn.setOnClickListener(v -> launchClientActivity());
-        startServiceBtn.setOnClickListener(v -> statusService.registerService(
-                                           currentContext, 5678));
+//        startServiceBtn.setOnClickListener(v -> statusService.registerService(
+//                                           currentContext, 5678));
         startDiscoveryBtn.setOnClickListener(v -> serviceManager.start_discovery());
         statusServiceBtn.setOnClickListener(v -> launchStatusServiceActivity());
     }
