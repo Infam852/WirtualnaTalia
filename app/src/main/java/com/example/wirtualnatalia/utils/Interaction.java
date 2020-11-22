@@ -3,8 +3,9 @@ package com.example.wirtualnatalia.utils;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.widget.Toast;
 
-public class Dialog {
+public class Interaction {
     public static void showAlert(Context context, String title, String msg){
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
         alertDialog.setTitle(title);
@@ -16,5 +17,9 @@ public class Dialog {
                     }
                 });
         alertDialog.show();
+    }
+
+    public static void showToast(Context context, String message){
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 }

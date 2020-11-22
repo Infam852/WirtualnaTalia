@@ -4,4 +4,5 @@
     <string name="STARTED">Started</string>
     <string name="START">START</string>
     <string name="STOP">STOP</string>
+    <string name="NOT_CONNECTED">Not Connected</string>
 </resources>

@@ -20,13 +20,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.wirtualnatalia.network.service.ServiceConnection;
 import com.example.wirtualnatalia.network.service.ServiceData;
 import com.example.wirtualnatalia.network.service.VirtualDeckService;
-import com.example.wirtualnatalia.utils.Dialog;
+import com.example.wirtualnatalia.utils.Interaction;
 import com.example.wirtualnatalia.R;
 import com.example.wirtualnatalia.network.NanoServer;
 import com.example.wirtualnatalia.network.service.ServiceManager;
 import com.example.wirtualnatalia.utils.User;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,9 +33,11 @@ public class StatusServiceActivity extends Activity {
     // UI elements
     private EditText nicknameInput;
     private TextView serviceNameTxt;
-    private TextView serverResponseTxt;
+    private TextView connectedToTxt;
     private Button setNicknameBtn;
     private Button startStatusServiceBtn;
+    private Button stopConnectionBtn;
+    private Button stopServerBtn;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView servicesList;
 
@@ -48,8 +48,7 @@ public class StatusServiceActivity extends Activity {
     private ArrayList<String> services;
     private ArrayAdapter <String> adapter;
 
-    private ServiceConnection connectionServer;
-    private ServiceConnection connectionClient;
+    private  ServiceConnection connection;
     private NanoServer nanoServer;
 
     @Override
@@ -75,6 +74,7 @@ public class StatusServiceActivity extends Activity {
 
         // it sets up discovery listener which should be initialized only once
         serviceManager.start_discovery();
+        refreshServices();
     }
 
     private void initUI(){
@@ -83,18 +83,32 @@ public class StatusServiceActivity extends Activity {
         String serviceName = ServiceData.getInstance().getServiceName();
         if (serviceName != null) { serviceNameTxt.setText(serviceName); }
 
-        serverResponseTxt = findViewById(R.id.serverResponseTxt);
+        connectedToTxt = findViewById(R.id.connectedToTxt);
+        String connectedTo = ServiceData.getInstance().getConnectedToServiceName();
+        if (connectedTo != null) { connectedToTxt.setText(connectedTo); }
 
         setNicknameBtn = findViewById(R.id.setNicknameBtn);
         setNicknameBtn.setOnClickListener(v -> {
-            Log.i(TAG, "Set nickname button");
+            Log.d(TAG, "Set nickname button");
             User.getInstance().setNickname(nicknameInput.getText().toString());
         });
 
         startStatusServiceBtn = findViewById(R.id.startStatusServiceBtn);
         startStatusServiceBtn.setOnClickListener(v -> {
-            Log.i(TAG, "Start service button clicked");
+            Log.d(TAG, "Start service button clicked");
             startService();
+        });
+
+        stopConnectionBtn = findViewById(R.id.stopConnectionBtn);
+        stopConnectionBtn.setOnClickListener(v -> {
+            Log.d(TAG, "Disconnect button clicked");
+            handleDisconnect();
+        });
+
+        stopServerBtn = findViewById(R.id.stopServerBtn);
+        stopServerBtn.setOnClickListener(v -> {
+            Log.d(TAG, "Stop button clicked");
+            handleStop();
         });
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshConnections);
@@ -115,13 +129,38 @@ public class StatusServiceActivity extends Activity {
     }
 
     private void handleConnection(AdapterView<?> adapter, int position){
+        if (ServiceData.getInstance().getConnectedToServiceName() != null){
+            Interaction.showAlert(this, "Warning",
+                    "You cannot connect to more than 1 service");
+            return;
+        }
         String item = (String) adapter.getItemAtPosition(position);
         NsdServiceInfo serviceClicked = serviceManager.getServicesMap().get(item);
         Log.i(TAG, "Item clicked: " + item);
         Log.i(TAG, "Service clicked: " + serviceClicked);
-        connectionClient = new ServiceConnection(this,
-                VirtualDeckService.SERVICE_NAME, VirtualDeckService.SERVICE_TYPE);
-        connectionClient.connect(serviceClicked);
+
+        initConnectionIfNotExist();
+        connection.connect(serviceClicked);
+    }
+
+    private void handleDisconnect(){
+        initConnectionIfNotExist();
+        connection.stopClient();
+    }
+
+    private void handleStop(){
+        if (nanoServer != null){
+            nanoServer.stop();
+        }
+        try{
+            serviceManager.unregisterService(connection.registrationListener);
+        } catch (IllegalArgumentException e) {
+            Log.w(TAG, "Cannot unregister: " + e.toString());
+        }
+        if (ServiceData.getInstance().getServiceName().equals(connection.SERVICE_NAME)){
+            connection.stopClient();
+        }
+        Interaction.showToast(this, "Your server has been stopped");
     }
 
     private void refreshServices(){
@@ -135,21 +174,33 @@ public class StatusServiceActivity extends Activity {
 
     private void startService(){
         Log.i(TAG, "Start service function");
-        connectionServer = new ServiceConnection(this,
-                VirtualDeckService.SERVICE_NAME, VirtualDeckService.SERVICE_TYPE);
+        initConnectionIfNotExist();
+
         try {
-            nanoServer = new NanoServer();
-            nanoServer.start();
+            NanoServer newServer = new NanoServer();
+            newServer.start();
+            // in order to not overwrite nanoServer when start() throws exception
+            nanoServer = newServer;
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "Server not started");
-            Dialog.showAlert(this, "Error", "You have already started service!");
+            Interaction.showAlert(this, "Error", "You have already started service!");
             return;
         }
 
         Log.i(TAG, String.format("Try to register service on port (%d)", NanoServer.PORT));
-        connectionServer.registerService(this, NanoServer.PORT);
+        connection.registerService(this, NanoServer.PORT);
+    }
 
-        serviceNameTxt.setText(connectionServer.SERVICE_NAME);
+    private void initConnectionIfNotExist(){
+        if (ServiceData.getInstance().getConnection() == null){
+            connection = new ServiceConnection(this,
+                    VirtualDeckService.SERVICE_NAME, VirtualDeckService.SERVICE_TYPE,
+                    serviceNameTxt, connectedToTxt);
+            ServiceData.getInstance().setConnection(connection);
+        }
+        else if (connection == null) {
+            connection = ServiceData.getInstance().getConnection();
+        }
     }
 }

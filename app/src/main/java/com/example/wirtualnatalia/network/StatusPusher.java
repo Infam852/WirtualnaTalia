@@ -1,12 +1,14 @@
 package com.example.wirtualnatalia.network;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class StatusPusher {
+    private static final String TAG = "StatusPusher";
     private HTTPClient httpClient;
     private ScheduledExecutorService executorService;
 
@@ -21,10 +23,10 @@ public class StatusPusher {
 
     private StatusPusher(HTTPClient httpClient) {
         this.httpClient = httpClient;
-        executorService = Executors.newScheduledThreadPool(1);  // 1 task
     }
 
     public void start(Context context) {
+        executorService = Executors.newScheduledThreadPool(1);  // 1 tasks
         // schedule to pool /status periodically
         executorService.scheduleAtFixedRate(new Runnable() {
             @Override
@@ -36,5 +38,6 @@ public class StatusPusher {
 
     public void stop() {
         executorService.shutdown();
+        Log.i(TAG, "stopped");
     }
 }

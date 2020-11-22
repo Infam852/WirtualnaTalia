@@ -112,6 +112,10 @@ public class ServiceManager {
         nsdManager.stopServiceDiscovery(discoveryListener);
     }
 
+    public void unregisterService(NsdManager.RegistrationListener registrationListener) throws IllegalArgumentException{
+        nsdManager.unregisterService(registrationListener);
+    }
+
     public ArrayList<NsdServiceInfo> getServices(){
         return discoveryServices;
     }

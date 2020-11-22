@@ -34,9 +34,9 @@ public class NanoServer extends NanoHTTPD {
         HTTP_NOTIMPLEMENTED = "501 Not Implemented";
 
 
-    public NanoServer() throws IOException {
+    public NanoServer() {
         super(PORT);
-        Log.i(TAG, "Server start listening on port: " + PORT);
+        Log.i(TAG, "Server initialized on port: " + PORT);
         WORKING = true;
     }
 
