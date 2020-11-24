@@ -16,6 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -32,7 +33,8 @@ public class HTTPClient {
 
     private final int port;
     private final InetAddress host;
-//    public String STATUS_URL = "http://192.168.0.24:5050/status";
+
+    public int errCounter;
 
     // !TODO should be enum?
     public static final String
@@ -44,7 +46,7 @@ public class HTTPClient {
         Log.i(TAG, "Created HTTPClient for (" + host.toString() + ":" + port + ")");
     }
 
-    public void sendStatusGET(Context context){
+    public void sendStatusGET(Context context) {
 
         RequestQueue queue = Volley.newRequestQueue(context);
         // Request a string response from the provided URL.
@@ -53,12 +55,13 @@ public class HTTPClient {
                     @Override
                     public void onResponse(String response) {
                         response = response + ", " + new Timestamp(System.currentTimeMillis());
-                        Log.d(TAG, "Got response on GET /status: " + response);
+                        Log.d(TAG, "Got response GET /status: " + response);
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "That didn't work! logs: " + error.getMessage());
+                errCounter += 1;
             }
         });
 

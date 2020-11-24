@@ -5,4 +5,7 @@
     <string name="START">START</string>
     <string name="STOP">STOP</string>
     <string name="NOT_CONNECTED">Not Connected</string>
+    <string name="REGISTERED">True</string>
+    <string name="UNREGISTERED">False</string>
+    <string name="VIRTUAL_DECK">Virtual Deck</string>
 </resources>

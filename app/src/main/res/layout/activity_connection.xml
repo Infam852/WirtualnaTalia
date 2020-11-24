@@ -7,56 +7,112 @@
     android:layout_height="match_parent"
     android:background="@color/dark_gray">
 
+    <TextView
+        android:id="@+id/serviceNameTxt"
+        android:layout_width="164dp"
+        android:layout_height="41dp"
+        android:layout_marginEnd="12dp"
+        android:text=" --"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toEndOf="@+id/serviceNameLabel"
+        app:layout_constraintTop_toBottomOf="@+id/connectedToTxt" />
+
+    <TextView
+        android:id="@+id/serviceNameLabel"
+        android:layout_width="175dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="20dp"
+        android:text="Service name:"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/serviceNameLabel2" />
+
     <Button
-        android:id="@+id/stopServerBtn"
-        android:layout_width="152dp"
-        android:layout_height="61dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="28dp"
+        android:id="@+id/unregisterBtn"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/primary_button"
         android:text="Stop Service"
         android:textColor="@color/white"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/stopConnectionBtn"
+        app:layout_constraintStart_toEndOf="@+id/startStatusServiceBtn"
+        app:layout_constraintTop_toBottomOf="@+id/serviceNameTxt" />
 
     <Button
         android:id="@+id/stopConnectionBtn"
-        android:layout_width="235dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="12dp"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/primary_button"
         android:text="Disconnect"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/startStatusServiceBtn"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/serviceNameTxt" />
 
     <TextView
         android:id="@+id/connectedToTxt"
         android:layout_width="164dp"
         android:layout_height="41dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="12dp"
         android:text="@string/NOT_CONNECTED"
         android:textColor="@color/white"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.333"
-        app:layout_constraintStart_toEndOf="@+id/serviceNameLabel"
-        app:layout_constraintTop_toBottomOf="@+id/serviceNameTxt" />
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toEndOf="@+id/serviceRegisteredLabel"
+        app:layout_constraintTop_toBottomOf="@+id/serviceRegisteredTxt" />
+
+    <TextView
+        android:id="@+id/serviceRegisteredLabel"
+        android:layout_width="175dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="12dp"
+        android:text="Service registered:"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/swipeRefreshConnections" />
+
+    <TextView
+        android:id="@+id/serviceRegisteredTxt"
+        android:layout_width="163dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
+        android:text="@string/UNREGISTERED"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.902"
+        app:layout_constraintStart_toEndOf="@+id/serviceRegisteredLabel"
+        app:layout_constraintTop_toBottomOf="@+id/swipeRefreshConnections" />
 
     <TextView
         android:id="@+id/serviceNameLabel2"
         android:layout_width="175dp"
         android:layout_height="42dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="4dp"
         android:text="Connected to:"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/serviceNameLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/serviceRegisteredLabel" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshConnections"
@@ -69,7 +125,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.483"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/usrNicknameInput">
+        app:layout_constraintTop_toBottomOf="@+id/serviceNameInput">
 
         <ListView
             android:id="@+id/servicesList"
@@ -91,69 +147,45 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/setNicknameBtn"
-        android:layout_width="152dp"
-        android:layout_height="50dp"
+        android:id="@+id/setServiceNameBtn"
+        android:layout_width="149dp"
+        android:layout_height="53dp"
         android:layout_marginTop="40dp"
         android:background="@drawable/primary_button"
-        android:text="Set nickname"
+        android:text="Set service name"
         android:textColor="@color/white"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.235"
-        app:layout_constraintStart_toEndOf="@+id/usrNicknameInput"
+        app:layout_constraintHorizontal_bias="0.507"
+        app:layout_constraintStart_toEndOf="@+id/serviceNameInput"
         app:layout_constraintTop_toBottomOf="@+id/SearchTitleView" />
 
     <EditText
-        android:id="@+id/usrNicknameInput"
+        android:id="@+id/serviceNameInput"
         android:layout_width="171dp"
         android:layout_height="47dp"
         android:layout_marginStart="28dp"
         android:layout_marginTop="40dp"
         android:ems="10"
-        android:hint="Nickname"
+        android:hint="@string/VIRTUAL_DECK"
         android:inputType="textPersonName"
         android:textColor="@color/white"
         android:textColorHint="@color/hint_color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/SearchTitleView" />
 
-    <TextView
-        android:id="@+id/serviceNameTxt"
-        android:layout_width="163dp"
-        android:layout_height="42dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="12dp"
-        android:text="@string/NOT_STARTED"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.906"
-        app:layout_constraintStart_toEndOf="@+id/serviceNameLabel"
-        app:layout_constraintTop_toBottomOf="@+id/swipeRefreshConnections" />
-
-    <TextView
-        android:id="@+id/serviceNameLabel"
-        android:layout_width="175dp"
-        android:layout_height="42dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="28dp"
-        android:text="Your service name:"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/swipeRefreshConnections" />
-
     <Button
         android:id="@+id/startStatusServiceBtn"
-        android:layout_width="153dp"
-        android:layout_height="62dp"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="28dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/primary_button"
         android:text="Start Service"
         android:textColor="@color/white"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/serviceNameLabel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

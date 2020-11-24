@@ -5,13 +5,10 @@ import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
 import android.util.Log;
 
-import com.example.wirtualnatalia.network.StatusPuller;
+import com.example.wirtualnatalia.network.FixedRateRequest;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import javax.net.ssl.SSLEngineResult;
 
 
 public class ServiceManager {
@@ -28,16 +25,27 @@ public class ServiceManager {
         discoveryServices = new ArrayList<>();
         servicesMap = new HashMap<>();
         nsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
-        initializeDiscoveryListener();
     }
 
     public void start_discovery() {
+        stopDiscovery();  // Cancel any existing discovery request
+        initializeDiscoveryListener();
+        Log.i(TAG, "Start nsdManager discover");
         nsdManager.discoverServices(
                 VirtualDeckService.SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
     }
 
-    public void initializeDiscoveryListener() {
+    public void stopDiscovery() {
+        if (discoveryListener != null) {
+            try {
+                nsdManager.stopServiceDiscovery(discoveryListener);
+            } finally {
+                discoveryListener = null;
+            }
+        }
+    }
 
+    public void initializeDiscoveryListener() {
         // Instantiate a new DiscoveryListener
         discoveryListener = new NsdManager.DiscoveryListener() {
 
@@ -50,7 +58,7 @@ public class ServiceManager {
             @Override
             public void onServiceFound(NsdServiceInfo service) {
                 // A service was found! Do something with it.
-                Log.i(TAG, "Service name: " + service.getServiceName() +
+                Log.i(TAG, "Service found!!, name: " + service.getServiceName() +
                         " Service type: " + VirtualDeckService.SERVICE_TYPE);
                 if (!service.getServiceType().equals(VirtualDeckService.SERVICE_TYPE)){
                     Log.i(TAG, "Unknown service found: " + service);
@@ -74,6 +82,7 @@ public class ServiceManager {
                 // Internal bookkeeping code goes here.
                 Log.e(TAG, "service lost: " + service);
                 NsdServiceInfo toRemove = null;
+                //
                 for (NsdServiceInfo serviceInfo: discoveryServices){
                     if (serviceInfo.toString().equals(service.toString())){
                         toRemove = serviceInfo;
@@ -84,6 +93,7 @@ public class ServiceManager {
                     discoveryServices.remove(toRemove);
                     servicesMap.remove(toRemove);
                 }
+
                 Log.i(TAG, "discovery services: " + discoveryServices + ", " + discoveryServices.contains(service));
             }
 
@@ -108,12 +118,20 @@ public class ServiceManager {
     }
 
     public void tearDown(NsdManager.RegistrationListener registrationListener) {
-        nsdManager.unregisterService(registrationListener);
-        nsdManager.stopServiceDiscovery(discoveryListener);
+        try {
+            nsdManager.unregisterService(registrationListener);
+            nsdManager.stopServiceDiscovery(discoveryListener);
+        } catch (IllegalArgumentException e){
+            Log.w(TAG, "Listener already unregistered");
+        }
     }
 
-    public void unregisterService(NsdManager.RegistrationListener registrationListener) throws IllegalArgumentException{
-        nsdManager.unregisterService(registrationListener);
+    public void unregisterService(NsdManager.RegistrationListener registrationListener) {
+        try {
+            nsdManager.unregisterService(registrationListener);
+        } catch (IllegalArgumentException e){
+            Log.w(TAG, "Listener already unregistered");
+        }
     }
 
     public ArrayList<NsdServiceInfo> getServices(){
