@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.wirtualnatalia">
     <!-- Necessary for proper connectivity  -->
+    <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission
         android:required="true"
         android:name="android.permission.ACCESS_WIFI_STATE"/>
@@ -31,6 +32,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.StatusServiceActivity" />
+        <activity android:name=".cloudanchor.CloudAnchorActivity" />
+        <meta-data android:name="com.google.ar.core" android:value="required" />
+        <meta-data
+            android:name="com.google.android.ar.API_KEY"
+            android:value="AIzaSyCTE2pGQyLHUD35yq89UK3v-Pf_WHXtoMg"/>
     </application>
 
 </manifest>

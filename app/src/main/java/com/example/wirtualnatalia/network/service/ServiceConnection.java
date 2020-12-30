@@ -225,4 +225,8 @@ public class ServiceConnection {
         };
         Log.i(TAG, "Initialized new registration listener");
     }
+
+    public HTTPClient getHttpClient(){
+        return httpClient;
+    }
 }

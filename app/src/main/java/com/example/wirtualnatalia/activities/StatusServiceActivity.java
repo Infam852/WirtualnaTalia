@@ -1,6 +1,7 @@
 package com.example.wirtualnatalia.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.wirtualnatalia.cloudanchor.CloudAnchorActivity;
 import com.example.wirtualnatalia.network.FixedRateRequest;
 import com.example.wirtualnatalia.network.service.ServiceConnection;
 import com.example.wirtualnatalia.network.service.ServiceData;
@@ -41,6 +43,7 @@ public class StatusServiceActivity extends Activity {
     private Button startStatusServiceBtn;
     private Button stopConnectionBtn;
     private Button stopServerBtn;
+    private Button arActivityBtn;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView servicesList;
 
@@ -51,7 +54,7 @@ public class StatusServiceActivity extends Activity {
     private ArrayList<String> services;
     private ArrayAdapter <String> adapter;
 
-    private  ServiceConnection connection;
+    private ServiceConnection connection;
 
     private Handler handlerUI;
     public static final int
@@ -153,12 +156,22 @@ public class StatusServiceActivity extends Activity {
         servicesList.setAdapter(adapter);
         servicesList.setOnItemClickListener(
                 (adapter, view, position, id) -> handleConnection(adapter, position));
+
+        arActivityBtn = (Button) findViewById(R.id.launchArActivityBtn);
+        arActivityBtn.setOnClickListener(v -> launchArActivity());
+    }
+
+    private void launchArActivity() {
+        Intent intent = new Intent(this, CloudAnchorActivity.class);
+        intent.putExtra("HTTPClient", connection.getHttpClient());
+        Log.i(TAG, "HTTP client: " + connection.getHttpClient());
+        startActivity(intent);
     }
 
     @Override
     protected void onPause() {
         if (serviceManager != null) {
-            serviceManager.tearDown(connection.registrationListener);
+            connection.tearDown();
             Log.i(TAG, "onPause called");
         }
         super.onPause();
@@ -179,7 +192,7 @@ public class StatusServiceActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        serviceManager.tearDown(connection.registrationListener);
+        connection.tearDown();
         Log.i(TAG, "onDestroy called");
         super.onDestroy();
     }
@@ -260,5 +273,4 @@ public class StatusServiceActivity extends Activity {
         connection = new ServiceConnection(this,
                 VirtualDeckService.SERVICE_NAME, VirtualDeckService.SERVICE_TYPE, handlerUI);
     }
-
 }

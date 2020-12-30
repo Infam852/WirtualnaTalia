@@ -7,6 +7,20 @@
     android:layout_height="match_parent"
     android:background="@color/dark_gray">
 
+    <Button
+        android:id="@+id/launchArActivityBtn"
+        android:layout_width="140dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/primary_button"
+        android:text="Launch AR"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/unregisterBtn" />
+
     <TextView
         android:id="@+id/serviceNameTxt"
         android:layout_width="164dp"
@@ -33,22 +47,8 @@
         app:layout_constraintTop_toBottomOf="@+id/serviceNameLabel2" />
 
     <Button
-        android:id="@+id/unregisterBtn"
-        android:layout_width="120dp"
-        android:layout_height="60dp"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/primary_button"
-        android:text="Stop Service"
-        android:textColor="@color/white"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/stopConnectionBtn"
-        app:layout_constraintStart_toEndOf="@+id/startStatusServiceBtn"
-        app:layout_constraintTop_toBottomOf="@+id/serviceNameTxt" />
-
-    <Button
         android:id="@+id/stopConnectionBtn"
-        android:layout_width="120dp"
+        android:layout_width="100dp"
         android:layout_height="60dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="20dp"
@@ -58,7 +58,39 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/serviceNameTxt" />
+        app:layout_constraintTop_toBottomOf="@+id/serviceNameTxt"
+        app:layout_constraintVertical_bias="0.222" />
+
+    <Button
+        android:id="@+id/startStatusServiceBtn"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/primary_button"
+        android:text="Start Service"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/serviceNameLabel"
+        app:layout_constraintVertical_bias="0.224" />
+
+    <Button
+        android:id="@+id/unregisterBtn"
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/primary_button"
+        android:text="Stop Service"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/stopConnectionBtn"
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toEndOf="@+id/startStatusServiceBtn"
+        app:layout_constraintTop_toBottomOf="@+id/serviceNameTxt"
+        app:layout_constraintVertical_bias="0.222" />
 
     <TextView
         android:id="@+id/connectedToTxt"
@@ -119,11 +151,10 @@
         android:layout_width="349dp"
         android:layout_height="235dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
         android:background="@color/gray"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.483"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/serviceNameInput">
 
@@ -148,7 +179,7 @@
 
     <Button
         android:id="@+id/setServiceNameBtn"
-        android:layout_width="149dp"
+        android:layout_width="140dp"
         android:layout_height="53dp"
         android:layout_marginTop="40dp"
         android:background="@drawable/primary_button"
@@ -173,19 +204,5 @@
         android:textColorHint="@color/hint_color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/SearchTitleView" />
-
-    <Button
-        android:id="@+id/startStatusServiceBtn"
-        android:layout_width="120dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/primary_button"
-        android:text="Start Service"
-        android:textColor="@color/white"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/serviceNameLabel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "173974026188",
+    "project_id": "ar-cloud-anchor-36d8f",
+    "storage_bucket": "ar-cloud-anchor-36d8f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:173974026188:android:0ce68f318fb14261eb8f69",
+        "android_client_info": {
+          "package_name": "com.example.wirtualnatalia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "173974026188-mq8v77sg260tadlchk1vraige9ebvb7i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADKxoS6XrwAKPEpiHd7Nia-tnq8te6zoE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "173974026188-mq8v77sg260tadlchk1vraige9ebvb7i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

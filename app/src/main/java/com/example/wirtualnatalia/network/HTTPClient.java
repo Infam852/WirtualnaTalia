@@ -11,10 +11,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.wirtualnatalia.common.cards.Card;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.InetAddress;
@@ -28,7 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 
 
-public class HTTPClient {
+public class HTTPClient implements Serializable {
     public String TAG = "HTTP CLIENT";
 
     private final int port;
@@ -36,9 +38,9 @@ public class HTTPClient {
 
     public int errCounter;
 
-    // !TODO should be enum?
     public static final String
-        STATUS_ENDPOINT = "status";
+        STATUS_ENDPOINT = "status",
+        CARD_ENDPOINT = "card";
 
     public HTTPClient(InetAddress host, int port){
         this.port = port;
@@ -47,7 +49,6 @@ public class HTTPClient {
     }
 
     public void sendStatusGET(Context context) {
-
         RequestQueue queue = Volley.newRequestQueue(context);
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, createURL(STATUS_ENDPOINT),
@@ -96,6 +97,40 @@ public class HTTPClient {
         queue.add(jsonObjectRequest);
     }
 
+    public void sendCard(Context context, Card card){
+        Log.i(TAG, "Try to send card");
+        JSONObject cardJSON = new JSONObject();
+        // fill request with data
+        try {
+            cardJSON.put("suit", card.getSuit());
+            cardJSON.put("symbol", card.getSymbol());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        // send data to the server
+        sendPOST(context, cardJSON, CARD_ENDPOINT);
+    }
+
+    public void sendPOST(Context context, JSONObject data, String endpoint){
+        RequestQueue queue = Volley.newRequestQueue(context);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
+                createURL(endpoint), data, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.i(TAG, "Got response: " + response.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "ERROR");
+                error.printStackTrace();
+            }
+        });
+
+        queue.add(jsonObjectRequest);
+    }
+
     private String getErrMessage(VolleyError error){
         try {
             String body = new String(error.networkResponse.data,"UTF-8");
@@ -107,8 +142,12 @@ public class HTTPClient {
     }
 
     private String createURL(String endpoint){
+        // create URL in format: <ip>:<port>/<path>
         return String.format(Locale.getDefault(), "http://%s:%d/%s",
                 this.host.toString(), this.port, endpoint);
     }
+
+    public int getPort() { return port; }
+    public InetAddress getHost() { return host; }
 
 }
