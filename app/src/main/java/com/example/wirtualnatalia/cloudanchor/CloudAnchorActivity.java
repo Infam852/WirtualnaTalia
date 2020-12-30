@@ -46,7 +46,9 @@ import com.example.wirtualnatalia.common.rendering.BackgroundRenderer;
 import com.example.wirtualnatalia.common.rendering.ObjectRenderer;
 import com.example.wirtualnatalia.common.rendering.PlaneRenderer;
 import com.example.wirtualnatalia.common.rendering.PointCloudRenderer;
+import com.example.wirtualnatalia.network.FixedRateRequest;
 import com.example.wirtualnatalia.network.HTTPClient;
+import com.example.wirtualnatalia.utils.Interaction;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.Anchor.CloudAnchorState;
 import com.google.ar.core.ArCoreApk;
@@ -72,6 +74,7 @@ import com.google.firebase.database.DatabaseError;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -145,6 +148,7 @@ public class CloudAnchorActivity extends AppCompatActivity
   private ArrayList<ObjectRenderer> virtualCards;
 
   private HTTPClient httpClient;
+  private FixedRateRequest getCardsRequestLoop;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -496,6 +500,10 @@ public class CloudAnchorActivity extends AppCompatActivity
         // Update and draw the model and its shadow.
         float scaleFactor = 0.2f;
         for(Card card: board.getCards()){
+          if (card.getVirtualCard() == null){
+            Log.i(TAG, "Set virtual card");
+            card.setVirtualCard(virtualCards.get(board.getNumberOfCards()));
+          }
           card.getVirtualCard().updateModelMatrix(card.getAnchorMatrix(), scaleFactor);
           card.getVirtualCard().draw(viewMatrix, projectionMatrix, colorCorrectionRgba, OBJECT_COLOR);
         }
@@ -568,15 +576,23 @@ public class CloudAnchorActivity extends AppCompatActivity
 
   private void onAddCardButton() {
     // !TODO currently hardcoded card is added
-    Card card = new Card(this, Card.CARD_TEMPLATE, Card.SUIT_TEMPLATE,
-            virtualCards.get(board.getNumberOfCards()));
-    board.addCard(card);
+    Card card = new Card(Card.CARD_TEMPLATE, Card.SUIT_TEMPLATE, UUID.randomUUID().toString());
+    Interaction.showToast(this, "Card added to the board!");
+//    board.addCard(card);
     Log.i(TAG, "Added new card on the board: " + board.getCards().size());
     if (httpClient != null){
+      // send card to the server
       httpClient.sendCard(this, card);
     }
     else {
       Log.e(TAG, "HttpClient is null");
+    }
+
+    // start background thread to pull cards
+    if (getCardsRequestLoop == null){
+      Log.i(TAG, "Start pull thread!");
+      getCardsRequestLoop = FixedRateRequest.getInstance();
+      getCardsRequestLoop.start(this, FixedRateRequest.MethodType.GET_CARDS, httpClient, 1000, 1, board);
     }
   }
 
@@ -622,6 +638,11 @@ public class CloudAnchorActivity extends AppCompatActivity
           cloudManager.resolveCloudAnchor(
               cloudAnchorId, resolveListener, SystemClock.uptimeMillis());
         });
+    if (getCardsRequestLoop == null){
+      Log.i(TAG, "Start pull thread!");
+      getCardsRequestLoop = FixedRateRequest.getInstance();
+      getCardsRequestLoop.start(this, FixedRateRequest.MethodType.GET_CARDS, httpClient, 1000, 1, board);
+    }
   }
 
   /**

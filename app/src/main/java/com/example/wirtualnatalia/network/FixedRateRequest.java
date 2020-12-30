@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.wirtualnatalia.common.cards.Board;
+
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -17,7 +19,8 @@ public class FixedRateRequest {
 
     public enum MethodType {
         GET_STATUS,
-        POST_STATUS
+        POST_STATUS,
+        GET_CARDS
     }
 
     private static int counter = 0;
@@ -33,7 +36,7 @@ public class FixedRateRequest {
         return INSTANCE;
     }
 
-    public int start(Context context, MethodType method, HTTPClient httpClient, int period, int poolSize) {
+    public int start(Context context, MethodType method, HTTPClient httpClient, int period, int poolSize, Board board) {
         // force creation due to possible shutdown
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(poolSize + 1);
         // schedule to pool /status periodically
@@ -50,6 +53,8 @@ public class FixedRateRequest {
                 case POST_STATUS:
                     httpClient.sendStatusPOST(context, "MOCKED_BODY");
                     break;
+                case GET_CARDS:
+                    httpClient.sendCardsGET(context, board);
             }
 
         }, 0, period, TimeUnit.MILLISECONDS);

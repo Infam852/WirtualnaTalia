@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.UUID;
 
 import fi.iki.elonen.NanoHTTPD;
 
@@ -56,6 +57,9 @@ public class NanoServer extends NanoHTTPD {
             }
         }
         else if (uri.equals("/card")){
+            if (session.getMethod() == Method.GET){
+                return handleCardsGET();
+            }
             if (session.getMethod() == Method.POST){
                 return handleCardsPOST(session);
             }
@@ -74,7 +78,7 @@ public class NanoServer extends NanoHTTPD {
             JSONObject json = new JSONObject(params.get("postData"));
             Log.i(TAG, "POST json=" + json + ", suit: " + json.getString("suit") + ", symbol" + json.getString("symbol"));
             // add cards to global array list
-            cards.add(new Card(json.getString("symbol"), json.getString("suit")));
+            cards.add(new Card(json.getString("symbol"), json.getString("suit"), json.getString("uuid")));
 
             JSONObject responseJson = new JSONObject();
             responseJson.put("response", "Got card!");
@@ -91,8 +95,8 @@ public class NanoServer extends NanoHTTPD {
     private Response handleCardsGET(){
         Gson gson = new Gson();
         String serialized = gson.toJson(cards);
-        ArrayList<Card> cards = gson.fromJson(serialized, ArrayList.class);
-        Log.i(TAG, "Deserialized cards: " + cards.toString());
+//        ArrayList<Card> cards = gson.fromJson(serialized, ArrayList.class);
+//        Log.i(TAG, "Deserialized cards: " + cards.toString());
         return newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, serialized);
     }
 

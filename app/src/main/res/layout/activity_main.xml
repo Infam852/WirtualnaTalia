@@ -4,13 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MainActivity">
+    tools:context=".activities.MainActivity"
+    android:background="@color/dark_gray">
+
+    <Button
+        android:id="@+id/exitBtn"
+        android:layout_width="237dp"
+        android:layout_height="89dp"
+        android:layout_marginTop="168dp"
+        android:text="Exit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/arActivityBtn" />
 
     <Button
         android:id="@+id/arActivityBtn"
         android:layout_width="237dp"
         android:layout_height="89dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="36dp"
         android:text="Go to AR service"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,8 +32,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Basic Server"
-        android:textColor="@color/black"
+        android:text="Wirtualna Talia"
+        android:textColor="@color/white"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

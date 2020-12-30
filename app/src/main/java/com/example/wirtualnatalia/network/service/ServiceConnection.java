@@ -104,10 +104,10 @@ public class ServiceConnection {
         Log.i(TAG, "Connected to the service: port: " + port + ", host: " + host.toString());
         httpClient = new HTTPClient(host, port);
 
-        FixedRateRequest fixedRateRequest = FixedRateRequest.getInstance();
-        // start status threads
-        fixedRateRequest.start(context, FixedRateRequest.MethodType.GET_STATUS, httpClient, 500, 1);
-        fixedRateRequest.start(context, FixedRateRequest.MethodType.POST_STATUS, httpClient, 500, 1);
+//        FixedRateRequest fixedRateRequest = FixedRateRequest.getInstance();
+//        // start status threads
+//        fixedRateRequest.start(context, FixedRateRequest.MethodType.GET_STATUS, httpClient, 500, 1);
+//        fixedRateRequest.start(context, FixedRateRequest.MethodType.POST_STATUS, httpClient, 500, 1);
 
         ServiceData.getInstance().setConnectedToServiceName(SERVICE_NAME_CONNECTED);
         Interaction.showToast(context, "You have connected to: " + SERVICE_NAME_CONNECTED);

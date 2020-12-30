@@ -11,7 +11,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.wirtualnatalia.common.cards.Board;
 import com.example.wirtualnatalia.common.cards.Card;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +27,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -41,6 +45,7 @@ public class HTTPClient implements Serializable {
     public static final String
         STATUS_ENDPOINT = "status",
         CARD_ENDPOINT = "card";
+
 
     public HTTPClient(InetAddress host, int port){
         this.port = port;
@@ -104,12 +109,39 @@ public class HTTPClient implements Serializable {
         try {
             cardJSON.put("suit", card.getSuit());
             cardJSON.put("symbol", card.getSymbol());
+            cardJSON.put("uuid", card.getId());
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         // send data to the server
         sendPOST(context, cardJSON, CARD_ENDPOINT);
+    }
+
+    public void sendCardsGET(Context context, Board board){
+        RequestQueue queue = Volley.newRequestQueue(context);
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, createURL(CARD_ENDPOINT),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+//                        response = response + ", " + new Timestamp(System.currentTimeMillis());
+                        Gson gson = new Gson();
+                        ArrayList<Card> cards = gson.fromJson(response, new TypeToken<ArrayList<Card>>(){}.getType());
+                        Log.i(TAG, "Got response GET /card: " + response);
+                        Log.i(TAG, "Got cards: " + cards);
+                        board.mergeCards(cards);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "That didn't work! logs: " + error.getMessage());
+                errCounter += 1;
+            }
+        });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 
     public void sendPOST(Context context, JSONObject data, String endpoint){

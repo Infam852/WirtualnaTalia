@@ -29,6 +29,23 @@ public class Board {
         }
     }
 
+    public void mergeCards(ArrayList<Card> cards){
+        for(Card card: cards){
+            if (cardNotPresent(card.getId())){
+                this.cards.add(card);
+            }
+        }
+    }
+
+    private boolean cardNotPresent(String id){
+        for(Card card: this.cards) {
+            if (card.getId().equals(id)){
+                return false;
+            }
+        }
+        return true;
+    }
+
     public ArrayList<Card> getCards(){
         return cards;
     }

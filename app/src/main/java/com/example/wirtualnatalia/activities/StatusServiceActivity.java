@@ -1,6 +1,7 @@
 package com.example.wirtualnatalia.activities;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.nsd.NsdServiceInfo;
@@ -162,6 +163,11 @@ public class StatusServiceActivity extends Activity {
     }
 
     private void launchArActivity() {
+        if (connection == null) {
+            Interaction.showAlert(this, "Error",
+                    "Firstly you have to connect to the server");
+            return;
+        }
         Intent intent = new Intent(this, CloudAnchorActivity.class);
         intent.putExtra("HTTPClient", connection.getHttpClient());
         Log.i(TAG, "HTTP client: " + connection.getHttpClient());

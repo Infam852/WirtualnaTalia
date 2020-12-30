@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 
 
 import com.example.wirtualnatalia.R;
 import com.example.wirtualnatalia.cloudanchor.CloudAnchorActivity;
 import com.example.wirtualnatalia.network.service.ServiceManager;
+import com.google.android.gms.common.data.BitmapTeleporter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button statusServiceBtn;
     private Button arActivityBtn;
+    private Button exitBtn;
 
 //    private StatusService statusService;
     private ServiceManager serviceManager;
@@ -30,16 +33,13 @@ public class MainActivity extends AppCompatActivity {
 
         statusServiceBtn = (Button) findViewById(R.id.serviceActivityBtn);
         arActivityBtn = (Button) findViewById(R.id.arActivityBtn);
+        exitBtn = (Button) findViewById(R.id.exitBtn);
 
         serviceManager = new ServiceManager(this);
         statusServiceBtn.setOnClickListener(v -> launchStatusServiceActivity());
         arActivityBtn.setOnClickListener(v -> launchArActivity());
-    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-//        !TODO
+        exitBtn.setOnClickListener(v -> exitApp());
     }
 
     private void launchStatusServiceActivity() {
@@ -52,4 +52,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void exitApp() {
+        finishAndRemoveTask();
+    }
 }
