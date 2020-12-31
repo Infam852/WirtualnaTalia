@@ -94,7 +94,7 @@ public class ServiceConnection {
     private void handlerStartConnection() {
         if (connectedService.getServiceName().equals(SERVICE_NAME)){
             Log.w(TAG, "Connected to the same device, abort...");
-            Interaction.showAlert(context, "Warning", "You try to connect to your service!");
+            Interaction.showAlert(context, "Warning", "You have connected to the service!");
 //                    return;
         }
 

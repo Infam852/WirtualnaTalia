@@ -540,6 +540,13 @@ public class CloudAnchorActivity extends AppCompatActivity
     } else {
       onPrivacyAcceptedForHost();
     }
+
+    // start background thread to pull cards
+    if (getCardsRequestLoop == null){
+      Log.i(TAG, "Start pull thread!");
+      getCardsRequestLoop = FixedRateRequest.getInstance();
+      getCardsRequestLoop.start(this, FixedRateRequest.MethodType.GET_CARDS, httpClient, 1000, 1, board);
+    }
   }
 
   private void onPrivacyAcceptedForHost() {
@@ -566,6 +573,13 @@ public class CloudAnchorActivity extends AppCompatActivity
     } else {
       onPrivacyAcceptedForResolve();
     }
+
+    // start background thread to pull cards
+    if (getCardsRequestLoop == null){
+      Log.i(TAG, "Start pull thread!");
+      getCardsRequestLoop = FixedRateRequest.getInstance();
+      getCardsRequestLoop.start(this, FixedRateRequest.MethodType.GET_CARDS, httpClient, 1000, 1, board);
+    }
   }
 
   private void onPrivacyAcceptedForResolve() {
@@ -586,13 +600,6 @@ public class CloudAnchorActivity extends AppCompatActivity
     }
     else {
       Log.e(TAG, "HttpClient is null");
-    }
-
-    // start background thread to pull cards
-    if (getCardsRequestLoop == null){
-      Log.i(TAG, "Start pull thread!");
-      getCardsRequestLoop = FixedRateRequest.getInstance();
-      getCardsRequestLoop.start(this, FixedRateRequest.MethodType.GET_CARDS, httpClient, 1000, 1, board);
     }
   }
 
